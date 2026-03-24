@@ -3,7 +3,7 @@ name: Deploy to AWS
 on:
   push:
     branches:
-      - master  # Deploy automático cuando pusheas a main
+      - master  # Deploy automático cuando pusheas a master
   workflow_dispatch:  # También permite deploy manual
 
 env:
@@ -48,7 +48,7 @@ jobs:
       # 6. Sync build folder a S3
       - name: Deploy to S3
         run: |
-          aws s3 sync build/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+          aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
         
       # 7. Invalidar cache de CloudFront
       - name: Invalidate CloudFront cache
