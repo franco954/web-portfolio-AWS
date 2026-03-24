@@ -1,0 +1,64 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - main  # Deploy automático cuando pusheas a main
+  workflow_dispatch:  # También permite deploy manual
+
+env:
+  AWS_REGION: us-east-1
+  NODE_VERSION: '18'
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Checkout del código
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      # 3. Instalar dependencias
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Build de React
+      - name: Build React app
+        run: npm run build
+        env:
+          CI: false  # Evita que warnings sean tratados como errores
+
+      # 5. Configurar AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # 6. Sync build folder a S3
+      - name: Deploy to S3
+        run: |
+          aws s3 sync build/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+        
+      # 7. Invalidar cache de CloudFront
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+      # 8. Notificación de éxito
+      - name: Deployment successful
+        run: |
+          echo "✅ Deployment completado exitosamente"
+          echo "🌐 URL: https://${{ secrets.CLOUDFRONT_URL }}"

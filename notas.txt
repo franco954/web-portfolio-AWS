@@ -1,0 +1,17 @@
+portfolio-react-aws/
+├── terraform/
+│   ├── main.tf              # S3 + CloudFront + CloudWatch
+│   ├── variables.tf         # Variables configurables
+│   ├── outputs.tf           # URLs y ARNs
+│   └── backend.tf           # State backend (opcional)
+├── .github/
+│   └── workflows/
+│       └── deploy.yml       # CI/CD pipeline
+├── src/                     # Tu código React
+├── public/
+├── package.json
+└── README.md
+
+
+Crear im role for github actions
+Adjuntar secrets en el repo de github
