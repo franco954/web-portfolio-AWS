@@ -3,7 +3,7 @@ name: Deploy to AWS
 on:
   push:
     branches:
-      - main  # Deploy automático cuando pusheas a main
+      - master  # Deploy automático cuando pusheas a main
   workflow_dispatch:  # También permite deploy manual
 
 env:
