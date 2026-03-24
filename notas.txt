@@ -14,4 +14,6 @@ portfolio-react-aws/
 
 
 Crear im role for github actions
+adjuntarle politica directa de s3 y CloudFront
 Adjuntar secrets en el repo de github
+url de bucket s3 y CloudFront
